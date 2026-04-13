@@ -1,0 +1,382 @@
+.turkey-map-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+.turkey-map-svg {
+  width: 100%;
+  height: auto;
+  max-height: calc(100% - 90px);
+  padding-top: 10px;
+}
+
+/* Province path styles */
+.province-path {
+  transition: opacity 0.2s ease, stroke-width 0.2s ease;
+  opacity: 0.85;
+}
+
+.province-path:hover {
+  opacity: 1;
+  stroke: rgba(255, 255, 255, 0.7);
+  stroke-width: 1.5;
+  filter: brightness(1.2);
+}
+
+.province-path.selected {
+  opacity: 1;
+  stroke: #fff;
+  stroke-width: 2.5;
+}
+
+.province-path.player {
+  opacity: 0.92;
+}
+
+/* Tooltip styles */
+.map-tooltip {
+  position: fixed;
+  z-index: 1000;
+  background: rgba(10, 10, 25, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 14px 18px;
+  min-width: 220px;
+  max-width: 280px;
+  pointer-events: none;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(16px);
+  animation: tooltip-in 0.15s ease;
+}
+
+@keyframes tooltip-in {
+  0% { opacity: 0; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.tooltip-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.tooltip-plate {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.tooltip-header h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.tooltip-pop {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 10px;
+}
+
+.tooltip-parties {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.tooltip-party-row {
+  display: grid;
+  grid-template-columns: 18px 60px 40px 1fr;
+  gap: 8px;
+  align-items: center;
+  font-size: 0.75rem;
+}
+
+.tooltip-party-logo {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.tooltip-party-name {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tooltip-party-vote {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
+  text-align: right;
+}
+
+.tooltip-bar-bg {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.tooltip-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Rally effects */
+.rally-pulse {
+  animation: pulse-ring 2s infinite;
+  opacity: 0.6;
+}
+
+@keyframes pulse-ring {
+  0% { r: 4; opacity: 0.8; }
+  100% { r: 25; opacity: 0; }
+}
+
+.rally-dot {
+  pointer-events: none;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
+}
+
+.province-path.has-bus {
+  stroke: #fbbf24 !important;
+  stroke-width: 2px !important;
+  filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.5));
+}
+
+/* Bus Animations */
+.player-bus-layer {
+  transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bus-outer-pulse {
+  animation: bus-spread 2s infinite ease-out;
+}
+
+@keyframes bus-spread {
+  0% { r: 10; opacity: 1; }
+  100% { r: 35; opacity: 0; }
+}
+
+.bus-icon-group {
+  animation: bus-float 3s infinite ease-in-out;
+}
+
+@keyframes bus-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.player-bus-layer text {
+  font-family: inherit;
+  text-shadow: 0 0 5px rgba(0,0,0,0.8);
+  pointer-events: none;
+}
+
+/* Harita Lejantı Tasarımı */
+.map-legend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 15px 30px;
+  border-top: 2px solid rgba(255, 255, 255, 0.05);
+  z-index: 10;
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.legend-icon-wrap {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.l-circle-pulse {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.3);
+  animation: l-pulse 2s infinite;
+}
+
+@keyframes l-pulse {
+  0% { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+.l-circle-dot {
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+  z-index: 2;
+  box-shadow: 0 0 5px white;
+}
+
+.l-office-box {
+  background: white;
+  color: black;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-size: 14px;
+  box-shadow: 0 0 10px rgba(255,255,255,0.4);
+}
+
+.l-bus-icon {
+  font-size: 20px;
+  filter: drop-shadow(0 0 4px #fbbf24);
+}
+
+.legend-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.l-label {
+  font-weight: 900;
+  font-size: 0.65rem;
+  color: white;
+  letter-spacing: 1px;
+}
+
+.l-desc {
+  font-size: 0.5rem;
+  color: rgba(255,255,255,0.4);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Ofis İkonu Stilizasyonu */
+.offices-layer text {
+  user-select: none;
+  pointer-events: none;
+}
+
+.offices-layer rect {
+  stroke: rgba(0,0,0,0.2);
+  stroke-width: 1px;
+}
+
+.rally-label {
+  font-family: inherit;
+  text-shadow: 0 0 4px rgba(0,0,0,1);
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: 0.5px;
+}
+
+/* --- ANLIK PARTİ KONUMLARI (RADAR) STİLLERİ --- */
+.presence-dot {
+  filter: drop-shadow(0 0 3px rgba(255,255,255,0.4));
+  transition: r 0.3s ease;
+}
+
+.presence-layer g:hover .presence-dot {
+  r: 8;
+  filter: drop-shadow(0 0 8px rgba(255,255,255,0.8));
+}
+
+.presence-label-bg {
+  stroke: rgba(255,255,255,0.1);
+  stroke-width: 0.5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.presence-text {
+  font-family: 'Inter', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.presence-layer g {
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- MAP VIEW SWITCHER (HUD) --- */
+.map-view-switcher {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  gap: 8px;
+  z-index: 100;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+.view-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.view-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.view-btn.active {
+  background: #3b82f6;
+  color: #fff;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+}
+
+.v-icon {
+  font-size: 0.9rem;
+}
+
+/* Neutral Map Style for Radar/Logistics */
+.province-path.neutral {
+  opacity: 0.5;
+  stroke: rgba(255,255,255,0.05);
+}
+
+.province-path.neutral:hover {
+  opacity: 0.8;
+  stroke: rgba(255,255,255,0.2);
+}

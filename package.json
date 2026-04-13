@@ -1,0 +1,69 @@
+{
+  "name": "se-im-oyunu-t-rkiye",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "electron-main.cjs",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "node server.cjs",
+    "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .\"",
+    "electron:build": "vite build && electron-builder",
+    "electron:pack": "electron-builder --dir"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "electron": "^34.3.0",
+    "electron-builder": "^25.1.8",
+    "typescript": "~6.0.2",
+    "vite": "^8.0.4",
+    "wait-on": "^8.0.2"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^6.0.1",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "lucide-react": "^1.8.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-router-dom": "^7.14.0",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3",
+    "electron-updater": "^6.3.9",
+    "electron-log": "^5.0.0"
+  },
+  "build": {
+    "appId": "com.secimoyunu.turkiye",
+    "productName": "Türkiye Seçim Simülasyonu",
+    "directories": {
+      "output": "release"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Iam-Hako",
+        "repo": "secim-oyunu-turkiye"
+      }
+    ],
+    "files": [
+      "dist/**/*",
+      "electron-main.cjs",
+      "server.cjs",
+      "src/data/**/*",
+      "src/services/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "public/vite.svg"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "Türkiye Seçim Simülasyonu"
+    }
+  }
+}
